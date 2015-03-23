@@ -26,10 +26,11 @@ sub new {
 
 }
 sub resolver  { my ($self, $id) = @_; $self->{resolvers}->{$id} }
+sub resolver_ids { my $self = shift; sort keys %{ $self->{resolvers} } }
 
 sub search_packages {
     my ($self, $args) = @_;
-    my @ordered = $self->{condition}->($args);
+    my @ordered = $self->{condition}->($self, $args);
     @ordered = () if @ordered && !defined $ordered[0];
     for my $id (@ordered) {
         my $resolver = $self->resolver($id) or die "Cannot find '$id' resolver";
@@ -53,7 +54,7 @@ CPAN::Common::Index::Mux::Conditional - choose index conditionally
     use CPAN::Common::Index::Mux::Conditional;
 
     my $condition_cb = sub {
-        my $args = shift;
+        my ($self, $args) = @_;
         if ($args->{package} eq "Moose") {
             qw(mirror2 mirror1);
         } else {

@@ -7,7 +7,7 @@ CPAN::Common::Index::Mux::Conditional - choose index conditionally
     use CPAN::Common::Index::Mux::Conditional;
 
     my $condition_cb = sub {
-        my $args = shift;
+        my ($self, $args) = @_;
         if ($args->{package} eq "Moose") {
             qw(mirror2 mirror1);
         } else {

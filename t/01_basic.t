@@ -18,7 +18,7 @@ use CPAN::Common::Index::Mux::Conditional;
 
 my $c = CPAN::Common::Index::Mux::Conditional->new(
     condition => sub {
-        my $arg = shift;
+        my ($self, $arg) = @_;
         $arg->{package} eq "Moose" ? qw(meta foo) : qw(foo meta);
     },
     resolvers => [
@@ -34,5 +34,7 @@ ok !$c->resolver("foo")->called;
 my $result2 = $c->search_packages({package => "Mouse"});
 is $result2->{package}, "Mouse";
 ok $c->resolver("foo")->called;
+
+is_deeply [ sort qw(foo meta) ], [ $c->resolver_ids ];
 
 done_testing;
