@@ -28,6 +28,8 @@ sub new {
 sub resolver  { my ($self, $id) = @_; $self->{resolvers}->{$id} }
 sub resolver_ids { my $self = shift; sort keys %{ $self->{resolvers} } }
 
+sub debug { my $self = shift; return unless $self->{verbose}; warn "-> [Common::Index::Conditional] @_\n" }
+
 sub search_packages {
     my ($self, $args) = @_;
     my @ordered = $self->{condition}->($self, $args);
@@ -35,6 +37,7 @@ sub search_packages {
     for my $id (@ordered) {
         my $resolver = $self->resolver($id) or die "Cannot find '$id' resolver";
         my $found = $resolver->search_packages($args);
+        $self->debug("resolving $args->{package} by $id ... ", $found ? "FOUND" : "NOT FOUND");
         return $found if $found;
     }
     return;
